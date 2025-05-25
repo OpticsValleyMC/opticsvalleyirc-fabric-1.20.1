@@ -2,6 +2,7 @@ package com.opticsvalley.irc;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -19,8 +20,11 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+            // 使用UTF-8编码处理输入输出
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+
+            // First message should be the username
             username = in.readLine();
             server.addClient(username, this);
 
@@ -39,6 +43,7 @@ public class ClientHandler implements Runnable {
     public void sendMessage(String message) {
         if (out != null) {
             out.println(message);
+            out.flush(); // 确保消息立即发送
         }
     }
 

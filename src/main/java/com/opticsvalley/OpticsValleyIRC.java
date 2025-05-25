@@ -28,11 +28,11 @@ public class OpticsValleyIRC implements ModInitializer {
 			}
 		} else {
 			// Connect case - always create a new connection
-			if (ircClient != null) {
-				ircClient.disconnect();
-			}
-			ircClient = new IRCClient(username);
-			ircClient.connect();
+		if (ircClient != null) {
+			ircClient.disconnect();
+		}
+		ircClient = new IRCClient(username);
+		ircClient.connect();
 		}
 	}
 }

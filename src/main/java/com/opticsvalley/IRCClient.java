@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.*;
 
 public class IRCClient {
@@ -32,8 +33,9 @@ public class IRCClient {
     private void tryConnect() {
         try {
             socket = new Socket(HOST, PORT);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            // 使用UTF-8编码
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
             // 发送用户名
             out.println(username);
@@ -80,6 +82,7 @@ public class IRCClient {
     public void sendMessage(String message) {
         if (connected && out != null) {
             out.println(message);
+            out.flush(); // 确保消息立即发送
         } else {
             sendGameMessage("§c[OpticsValleyIRC] 未连接到服务器，无法发送消息");
             // 如果没有连接，尝试重连
@@ -94,8 +97,22 @@ public class IRCClient {
         shouldReconnect = false;
         connected = false;
         try {
-            if (socket != null) socket.close();
-            if (messageListener != null) messageListener.interrupt();
+            if (out != null) {
+                out.close();
+                out = null;
+            }
+            if (in != null) {
+                in.close();
+                in = null;
+            }
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
+            if (messageListener != null) {
+                messageListener.interrupt();
+                messageListener = null;
+            }
             scheduler.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
