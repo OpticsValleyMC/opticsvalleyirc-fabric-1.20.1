@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "opticsvalleyirc",
+	"version": "${version}",
+	"name": "OpticsValley IRC",
+	"description": "IRC Client",
+	"authors": [
+		"OpticsValley"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/opticsvalleyirc/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"com.opticsvalley.OpticsValleyIRC"
+		],
+		"client": [
+			"com.opticsvalley.OpticsValleyIRCClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.14.0",
+		"fabric": "*",
+		"minecraft": ">=1.20.1",
+		"java": ">=17"
+	}
+}
