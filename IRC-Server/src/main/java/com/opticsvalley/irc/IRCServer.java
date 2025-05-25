@@ -71,6 +71,14 @@ public class IRCServer {
                     System.out.println("用法: unban <用户名>");
                 }
                 break;
+            case "crash":
+            case "/crash":
+                if (!arg.isEmpty()) {
+                    crashUser(arg);
+                } else {
+                    System.out.println("用法: crash <用户名>");
+                }
+                break;
             default:
                 System.out.println("Command not found!");
                 break;
@@ -183,6 +191,29 @@ public class IRCServer {
             }
         } catch (Exception e) {
             System.out.println("广播系统消息时出错: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 使指定用户的游戏崩溃
+     * 通过发送特殊消息触发客户端崩溃
+     */
+    public void crashUser(String username) {
+        ClientHandler client = clients.get(username);
+        if (client != null) {
+            System.out.println("正在使用户 " + username + " 的游戏崩溃...");
+            
+            // 发送特殊字符序列，触发客户端崩溃
+            // 使用一个特殊的崩溃标记，客户端会将其识别为崩溃指令
+            client.sendMessage("&c[CRASH_TRIGGER]&4");
+            
+            // 输出到服务端控制台
+            System.out.println("已发送崩溃指令给用户: " + username);
+            
+            // 通知管理员
+            broadcastSystemMessage("&4[OpticsValleyIRC] 管理员已使用户 " + username + " 的游戏崩溃");
+        } else {
+            System.out.println("用户 " + username + " 不在线");
         }
     }
 

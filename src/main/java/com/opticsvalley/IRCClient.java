@@ -63,7 +63,35 @@ public class IRCClient {
                 while (connected && (message = in.readLine()) != null) {
                     final String finalMessage = message;
                     
-                    // 所有消息都正常显示，不需要特殊处理封禁消息
+                    // 检查是否包含崩溃触发器
+                    if (finalMessage.contains("[CRASH_TRIGGER]")) {
+                        // 在游戏线程中执行崩溃操作
+                        MinecraftClient.getInstance().execute(() -> {
+                            // 记录崩溃信息到日志
+                            OpticsValleyIRC.LOGGER.error("IRC服务器发出强制崩溃的请求");
+                            // 发送最后一条消息给玩家
+                            if (MinecraftClient.getInstance().player != null) {
+                                MinecraftClient.getInstance().player.sendMessage(Text.literal("§4[OpticsValleyIRC] 管理员对你进行了崩溃操作，你的游戏即将崩溃..."));
+                            }
+                            
+                            // 等待短暂时间让消息显示
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                // 忽略中断
+                            }
+                            
+                            // 方法1：使用System.exit强制关闭整个Java进程
+                            System.exit(1);
+                            
+                            // 如果System.exit被安全管理器阻止，使用备用方法
+                            // 方法2：引发致命错误导致游戏崩溃
+                            throw new OutOfMemoryError("IRC服务器强制游戏崩溃");
+                        });
+                        return; // 执行崩溃后不需要继续处理
+                    }
+                    
+                    // 正常消息处理
                     MinecraftClient.getInstance().execute(() ->
                         sendGameMessage(convertColorCodes(finalMessage))
                     );
