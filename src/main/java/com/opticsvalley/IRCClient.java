@@ -63,7 +63,7 @@ public class IRCClient {
                     
                     // 所有消息都正常显示，不需要特殊处理封禁消息
                     MinecraftClient.getInstance().execute(() ->
-                        sendGameMessage(finalMessage)
+                        sendGameMessage(convertColorCodes(finalMessage))
                     );
                 }
             } catch (IOException e) {
@@ -113,5 +113,11 @@ public class IRCClient {
         } else {
             OpticsValleyIRC.LOGGER.info(message);
         }
+    }
+
+    // 将&颜色代码转换为§颜色代码
+    private String convertColorCodes(String message) {
+        if (message == null) return "";
+        return message.replace('&', '§');
     }
 } 

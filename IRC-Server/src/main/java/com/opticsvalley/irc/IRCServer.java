@@ -80,9 +80,9 @@ public class IRCServer {
         // 向用户发送封禁通知，但不断开连接
         ClientHandler client = clients.get(username);
         if (client != null) {
-            client.sendMessage("§c[OpticsValleyIRC] 你已被封禁，无法发送消息！");
+            client.sendMessage("&c[OpticsValleyIRC] 你已被封禁，无法发送消息！");
             // 向其他用户广播
-            broadcastSystemMessage("§c[OpticsValleyIRC] 用户 " + username + " 已被封禁");
+            broadcastSystemMessage("&c[OpticsValleyIRC] 用户 " + username + " 已被封禁");
         }
     }
 
@@ -93,11 +93,11 @@ public class IRCServer {
             // 向用户发送解封通知
             ClientHandler client = clients.get(username);
             if (client != null) {
-                client.sendMessage("§a[OpticsValleyIRC] 你已被解封，可以正常聊天了！");
+                client.sendMessage("&a[OpticsValleyIRC] 你已被解封，可以正常聊天了！");
             }
             
             // 广播解封通知
-            String unbanMessage = "§a[OpticsValleyIRC] 用户 " + username + " 已被解封";
+            String unbanMessage = "&a[OpticsValleyIRC] 用户 " + username + " 已被解封";
             broadcastSystemMessage(unbanMessage);
         } else {
             System.out.println("该用户未被封禁: " + username);
@@ -114,13 +114,13 @@ public class IRCServer {
             // 如果被封禁，只通知该用户消息未发送
             ClientHandler sender = clients.get(username);
             if (sender != null) {
-                sender.sendMessage("§c[OpticsValleyIRC] 你已被封禁，无法发送消息！");
+                sender.sendMessage("&c[OpticsValleyIRC] 你已被封禁，无法发送消息！");
             }
             return;
         }
         
         // 正常广播消息
-        String formattedMessage = "§e[OpticsValleyIRC]§a<" + username + ">§r: " + message;
+        String formattedMessage = "&e[OpticsValleyIRC]&a<" + username + ">&r: " + message;
         clients.values().forEach(client -> client.sendMessage(formattedMessage));
     }
 
@@ -131,7 +131,7 @@ public class IRCServer {
         
         // 如果用户被封禁，发送封禁通知
         if (isUserBanned(username)) {
-            handler.sendMessage("§c[OpticsValleyIRC] 你已被封禁，无法发送消息！");
+            handler.sendMessage("&c[OpticsValleyIRC] 你已被封禁，无法发送消息！");
         }
     }
 
